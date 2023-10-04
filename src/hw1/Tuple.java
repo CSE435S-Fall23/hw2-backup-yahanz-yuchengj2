@@ -2,6 +2,7 @@ package hw1;
 
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents a tuple that will contain a single row's worth of information
@@ -15,13 +16,20 @@ public class Tuple {
 	 * Creates a new tuple with the given description
 	 * @param t the schema for this tuple
 	 */
+	private TupleDesc td;
+	private int pageId;
+	private int id;
+	private Map<Integer, Field> fields = new HashMap<Integer, Field>();
+	
 	public Tuple(TupleDesc t) {
 		//your code here
+		this.td = t;
 	}
 	
 	public TupleDesc getDesc() {
 		//your code here
-		return null;
+		return td;
+		
 	}
 	
 	/**
@@ -30,11 +38,12 @@ public class Tuple {
 	 */
 	public int getPid() {
 		//your code here
-		return 0;
+		return pageId;
 	}
 
 	public void setPid(int pid) {
 		//your code here
+		this.pageId = pid;
 	}
 
 	/**
@@ -43,15 +52,17 @@ public class Tuple {
 	 */
 	public int getId() {
 		//your code here
-		return 0;
+		return id;
 	}
 
 	public void setId(int id) {
 		//your code here
+		this.id = id;
 	}
 	
 	public void setDesc(TupleDesc td) {
 		//your code here;
+		this.td = td;
 	}
 	
 	/**
@@ -61,11 +72,12 @@ public class Tuple {
 	 */
 	public void setField(int i, Field v) {
 		//your code here
+		this.fields.put(i, v);
 	}
 	
 	public Field getField(int i) {
 		//your code here
-		return null;
+		return fields.get(i);
 	}
 	
 	/**
@@ -74,8 +86,13 @@ public class Tuple {
 	 * the String columns to readable text).
 	 */
 	public String toString() {
-		//your code here
-		return "";
+		//your code here 
+		StringBuilder str = new StringBuilder();
+		int length = fields.size();
+		for (int i = 0; i<length; i++) {
+			str.append(getField(i).toString());
+		}
+		String s = str.toString();
+		return s;
 	}
 }
-	

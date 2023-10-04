@@ -15,6 +15,8 @@ public class Relation {
 	
 	public Relation(ArrayList<Tuple> l, TupleDesc td) {
 		//your code here
+		this.tuples = l;
+		this.td = td;
 	}
 	
 	/**
@@ -26,7 +28,21 @@ public class Relation {
 	 */
 	public Relation select(int field, RelationalOperator op, Field operand) {
 		//your code here
-		return null;
+		
+		//return null;
+		 ArrayList<Tuple> selectedTuples = new ArrayList<>();
+
+		    for (Tuple tuple : tuples) {
+		       
+		        Field tupleField = tuple.getField(field);
+
+		        // Check if the comparison condition holds
+		        if (tupleField.compare(op, operand)) {
+		            selectedTuples.add(tuple);
+		        }
+		    }
+		    TupleDesc newTd = td;
+		    return new Relation(selectedTuples, newTd);
 	}
 	
 	/**
@@ -37,7 +53,16 @@ public class Relation {
 	 */
 	public Relation rename(ArrayList<Integer> fields, ArrayList<String> names) {
 		//your code here
-		return null;
+		//return null;
+		  TupleDesc newTd = new TupleDesc();
+		  String[] newFields = new String[td.numFields()];
+		  newFields = td.getFields();
+		  
+		  for (int i = 0; i < fields.size(); i++) {
+			  newFields[fields.get(i)] = names.get(i);
+		  }
+		  td.setFields(newFields);
+		  return new Relation(tuples, newTd);
 	}
 	
 	/**
@@ -48,6 +73,24 @@ public class Relation {
 	public Relation project(ArrayList<Integer> fields) {
 		//your code here
 		return null;
+//		 ArrayList<Tuple> projectedTuples = new ArrayList<>();
+//		    TupleDesc newTd = new TupleDesc();
+//
+//		    for (Integer fieldIdx : fields) {
+//		        newTd.addField(td.getFieldName(fieldIdx), td.getType(fieldIdx));
+//		    }
+//
+//		    for (Tuple tuple : tuples) {
+//		        Field[] fieldsToKeep = new Field[fields.size()];
+//		        for (int i = 0; i < fields.size(); i++) {
+//		            fieldsToKeep[i] = tuple.getField(fields.get(i));
+//		        }
+//		        Tuple projectedTuple = new Tuple(newTd);
+//		        projectedTuples.add(projectedTuple);
+//		    }
+//
+//		    return new Relation(projectedTuples, newTd);
+		    
 	}
 	
 	/**
@@ -61,7 +104,39 @@ public class Relation {
 	 */
 	public Relation join(Relation other, int field1, int field2) {
 		//your code here
-		return null;
+		int totalLength = this.td.getNumFields() + other.td.getNumFields();
+		Type[] type = new Type[this.td.getNumFields() + other.td.getNumFields()];
+		String[] fieldArr = new String[this.td.getNumFields() + other.td.getNumFields()];
+		for(int i = 0; i < this.td.getNumFields(); i++) {
+			type[i] = this.td.getType(i);
+			fieldArr[i] = this.td.getFieldName(i);
+		}
+		for(int j = this.td.getNumFields(); j < totalLength; j++) {
+			type[j] = other.td.getType(j - this.td.getNumFields());
+			fieldArr[j] = other.td.getFieldName(j - this.td.getNumFields());
+		}
+		
+		TupleDesc tp = new TupleDesc(type, fieldArr);
+		
+		ArrayList<Tuple> tupList = new ArrayList<Tuple>();
+		for(Tuple tuple: this.getTuples()) {
+			for (Tuple tuple2: other.getTuples()) {
+				if(tuple.getField(field1).equals(tuple2.getField(field2))){
+					Tuple tup = new Tuple(tp);
+					for(int i = 0; i < this.td.getNumFields(); i++) {
+						tup.setField(i, tuple.getField(i));
+					}
+					for (int j = this.td.getNumFields(); j < totalLength; j++) {
+						tup.setField(j, tuple2.getField(j - this.td.getNumFields()));
+					}
+					tupList.add(tup);
+				}
+			}
+		}
+		
+		return new Relation(tupList, tp);
+				
+
 	}
 	
 	/**
@@ -77,12 +152,12 @@ public class Relation {
 	
 	public TupleDesc getDesc() {
 		//your code here
-		return null;
+		return td;
 	}
 	
 	public ArrayList<Tuple> getTuples() {
 		//your code here
-		return null;
+		return tuples;
 	}
 	
 	/**

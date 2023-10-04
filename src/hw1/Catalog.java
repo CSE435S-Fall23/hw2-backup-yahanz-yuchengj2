@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-
+import java.util.HashMap;
 /**
  * The Catalog keeps track of all available tables in the database and their
  * associated schemas.
@@ -20,8 +20,26 @@ public class Catalog {
      * Constructor.
      * Creates a new, empty catalog.
      */
+	private class Tb{
+		private String name;
+		private HeapFile file;
+		private String pkeyField;
+		
+		public Tb(String name, HeapFile file, String pkeyField) {
+			this.name = name;
+			this.file = file;
+			this.pkeyField = pkeyField;
+		}
+	}
+	
+	private Map<Integer, Tb> map;
+	private ArrayList<Integer> id;
+	
     public Catalog() {
     	//your code here
+    	
+    	map = new HashMap<Integer, Tb>();
+    	id = new ArrayList<Integer>(0);
     }
 
     /**
@@ -34,6 +52,10 @@ public class Catalog {
      */
     public void addTable(HeapFile file, String name, String pkeyField) {
     	//your code here
+    	int fileId = file.getId();
+    	Tb table = new Tb(name, file, pkeyField);
+    	map.put(fileId, table);
+    	
     }
 
     public void addTable(HeapFile file, String name) {
@@ -46,7 +68,20 @@ public class Catalog {
      */
     public int getTableId(String name) {
     	//your code here
-    	return 0;
+    	try {
+    		for(Map.Entry<Integer, Tb> tb : map.entrySet()) {
+    			int key = tb.getKey();
+    			Tb tab = tb.getValue();
+    			String tabName = tab.name;
+    			if(tabName.equals(name)) {
+    				return key;
+    			}
+    			
+    		}
+    	}catch(Exception e) {
+    		throw new NoSuchElementException();
+    	}
+    	throw new NoSuchElementException();
     }
 
     /**
@@ -56,7 +91,8 @@ public class Catalog {
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	Tb tb = map.get(tableid);
+    	return tb.file.getTupleDesc();
     }
 
     /**
@@ -67,27 +103,38 @@ public class Catalog {
      */
     public HeapFile getDbFile(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	Tb tb = map.get(tableid);
+    	return tb.file;
     }
 
     /** Delete all tables from the catalog */
     public void clear() {
     	//your code here
+    	map.clear();
     }
 
     public String getPrimaryKey(int tableid) {
     	//your code here
-    	return null;
+    	Tb tb = map.get(tableid);
+    	if(tb == null) {
+    		throw new NoSuchElementException();
+    	}
+    	return tb.pkeyField;
     }
 
     public Iterator<Integer> tableIdIterator() {
     	//your code here
-    	return null;
+    	Iterator it = (Iterator)map.entrySet().iterator();
+    	return it;
     }
 
     public String getTableName(int id) {
     	//your code here
-    	return null;
+    	Tb tb = map.get(id);
+    	if(tb == null) {
+    		throw new NoSuchElementException();
+    	}
+    	return tb.name;
     }
     
     /**

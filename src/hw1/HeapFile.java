@@ -16,25 +16,30 @@ import java.util.Iterator;
  */
 public class HeapFile {
 	
-	public static final int PAGE_SIZE = 4096;
+	public static final int PAGE_SIZE = 4096; 
 	
 	/**
 	 * Creates a new heap file in the given location that can accept tuples of the given type
 	 * @param f location of the heap file
 	 * @param types type of tuples contained in the file
 	 */
-	public HeapFile(File f, TupleDesc type) {
+	private File aFile;
+	private TupleDesc aType;
+	public HeapFile(File f, TupleDesc type){
 		//your code here
+		 this.aFile =f;
+		 this.aType = type;
+		 
 	}
 	
 	public File getFile() {
 		//your code here
-		return null;
+		return aFile;
 	}
 	
 	public TupleDesc getTupleDesc() {
 		//your code here
-		return null;
+		return aType;
 	}
 	
 	/**
@@ -45,8 +50,18 @@ public class HeapFile {
 	 * @return a HeapPage at the given page number
 	 */
 	public HeapPage readPage(int id) {
-		//your code here
-		return null;
+		 byte[] hp = new byte[PAGE_SIZE];
+		    
+		    try (RandomAccessFile ranFile = new RandomAccessFile(aFile, "r")) {
+		    	ranFile.seek(PAGE_SIZE * id);
+		    	ranFile.readFully(hp);
+//		    	ranFile.close();
+		        return new HeapPage(id, hp, this.getId());
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+		    
+		    return null;
 	}
 	
 	/**
@@ -56,7 +71,7 @@ public class HeapFile {
 	 */
 	public int getId() {
 		//your code here
-		return -1;
+		return this.hashCode();
 	}
 	
 	/**
@@ -64,8 +79,15 @@ public class HeapFile {
 	 * a RandomAccessFile object should be used in this method.
 	 * @param p the page to write to disk
 	 */
-	public void writePage(HeapPage p) {
+	public void writePage(HeapPage p)throws Exception {
 		//your code here
+		assert p instanceof HeapPage : "Write non-heap";
+	    RandomAccessFile ranFile = new RandomAccessFile(aFile, "rw");
+	  
+	    ranFile.seek(PAGE_SIZE * p.getId());
+	    ranFile.write(p.getPageData());
+	    ranFile.close();
+		
 	}
 	
 	/**
@@ -74,19 +96,74 @@ public class HeapFile {
 	 * the page to disk (see writePage)
 	 * @param t The tuple to be stored
 	 * @return The HeapPage that contains the tuple
+	 * @throws Exception 
 	 */
-	public HeapPage addTuple(Tuple t) {
+	public HeapPage addTuple(Tuple t) throws Exception {
 		//your code here
-		return null;
+		
+		if (!aType.equals(t.getDesc())) {
+			throw new Exception("TupleDesc are not match.");
+		}
+        
+        for (int i = 0; i < getNumPages(); i ++) {
+        	HeapPage hp = readPage(i);
+        	for (int j = 0; j < hp.getNumSlots(); j ++) {
+                if (!hp.slotOccupied(j)) {
+                	hp.addTuple(t);
+                	
+                	try {
+                		byte[] byteS = hp.getPageData();
+   	                 	RandomAccessFile ranFile = new RandomAccessFile(aFile, "rw");
+   	                 	ranFile.seek(PAGE_SIZE*i);
+   	                 	ranFile.write(byteS);
+   	                 	ranFile.close();
+	                }
+	                catch (IOException e) {
+	                    throw e;
+	                }
+                	return hp;
+                } 
+            }
+        }
+        HeapPage hp = new HeapPage(getNumPages(), new byte[PAGE_SIZE], this.getId());
+        hp.addTuple(t);
+        this.writePage(hp);
+        return hp;
+		
 	}
 	
 	/**
 	 * This method will examine the tuple to find out where it is stored, then delete it
 	 * from the proper HeapPage. It then writes the modified page to disk.
 	 * @param t the Tuple to be deleted
+	 * @throws Exception 
 	 */
-	public void deleteTuple(Tuple t){
+	public void deleteTuple(Tuple t) throws Exception{
 		//your code here
+		if (!aType.equals(t.getDesc())) {
+			throw new Exception("TupleDesc are not match.");
+		}
+        
+        for (int i = 0; i < getNumPages(); i ++) {
+        	HeapPage hp = readPage(i);
+        	for (int j = 0; j < hp.getNumSlots(); j ++) {
+                if (hp.slotOccupied(j)) {
+                	hp.deleteTuple(t);
+                	try {
+	                    byte[] bs = hp.getPageData();
+	                    
+	                    RandomAccessFile ranFile = new RandomAccessFile(aFile, "rw");
+	                    ranFile.seek(PAGE_SIZE*i);
+	                    ranFile.write(bs);
+	                    ranFile.close();
+	                }
+	                catch (IOException e) {
+	                    throw e;
+	                }
+                } 
+            }
+        }
+		
 	}
 	
 	/**
@@ -96,15 +173,25 @@ public class HeapFile {
 	 */
 	public ArrayList<Tuple> getAllTuples() {
 		//your code here
-		return null;
+		ArrayList<Tuple> tupleList = new ArrayList<Tuple>();
+        for (int i = 0; i < getNumPages(); i ++) {
+        	HeapPage hp = readPage(i);
+        	Iterator<Tuple> tupleI = hp.iterator();
+    		while (tupleI.hasNext()) {
+    			tupleList.add(tupleI.next());
+    		}
+    	
+        }
+        return tupleList;
 	}
-	
+
 	/**
 	 * Computes and returns the total number of pages contained in this HeapFile
 	 * @return the number of pages
 	 */
 	public int getNumPages() {
 		//your code here
-		return 0;
+		return (int)Math.ceil((double)(aFile.length()/PAGE_SIZE));
 	}
+	
 }
