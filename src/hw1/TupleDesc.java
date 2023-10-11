@@ -39,7 +39,14 @@ public class TupleDesc {
     public String[] getFields() {
     	return fields;
     }
-
+    
+    public void setType(Type[] types) {
+    	this.types = types;
+    }
+    
+    public Type[] getType() {
+    	return types;
+    }
     /**
      * Gets the (possibly null) field name of the ith field of this TupleDesc.
      *

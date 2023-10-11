@@ -54,14 +54,17 @@ public class Relation {
 	public Relation rename(ArrayList<Integer> fields, ArrayList<String> names) {
 		//your code here
 		//return null;
-		  TupleDesc newTd = new TupleDesc();
+		 
 		  String[] newFields = new String[td.numFields()];
 		  newFields = td.getFields();
+		  Type[] arr = td.getType();
 		  
 		  for (int i = 0; i < fields.size(); i++) {
 			  newFields[fields.get(i)] = names.get(i);
 		  }
-		  td.setFields(newFields);
+		 
+		  TupleDesc newTd = new TupleDesc(arr, newFields);
+		  //td.setFields(newFields);
 		  return new Relation(tuples, newTd);
 	}
 	
@@ -72,24 +75,33 @@ public class Relation {
 	 */
 	public Relation project(ArrayList<Integer> fields) {
 		//your code here
-		return null;
-//		 ArrayList<Tuple> projectedTuples = new ArrayList<>();
-//		    TupleDesc newTd = new TupleDesc();
-//
-//		    for (Integer fieldIdx : fields) {
-//		        newTd.addField(td.getFieldName(fieldIdx), td.getType(fieldIdx));
-//		    }
-//
-//		    for (Tuple tuple : tuples) {
-//		        Field[] fieldsToKeep = new Field[fields.size()];
-//		        for (int i = 0; i < fields.size(); i++) {
-//		            fieldsToKeep[i] = tuple.getField(fields.get(i));
-//		        }
-//		        Tuple projectedTuple = new Tuple(newTd);
-//		        projectedTuples.add(projectedTuple);
-//		    }
-//
-//		    return new Relation(projectedTuples, newTd);
+//		return null;
+		 	ArrayList<Tuple> tuples = new ArrayList<>();
+		 	
+		 	Type[] type = new Type[fields.size()];
+			String[] fieldArr = new String[fields.size()];
+			int i = 0;
+			int j = 0;
+			for(Integer integer: fields) {
+				type[i] = this.td.getType(integer);
+				fieldArr[i] = this.td.getFieldName(integer);
+				i++;
+			}
+		 	
+		 	TupleDesc newTd = new TupleDesc(type, fieldArr);
+		 	
+		 	for(Tuple tuple: this.getTuples()) {
+		 		Tuple tup = new Tuple(newTd);
+		 		for(Integer integer: fields) {
+		 			
+		 				
+						tup.setField(j, tuple.getField(integer));
+						j++;
+					
+		 		}
+		 		tuples.add(tup);
+		 	}
+		    return new Relation(tuples, newTd);
 		    
 	}
 	
@@ -146,8 +158,9 @@ public class Relation {
 	 * @return
 	 */
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
-		//your code here
-		return null;
+		//ArrayList<Tuple> tuples = new ArrayList<>();
+		//TupleDesc newTd = new TupleDesc();
+		return this;
 	}
 	
 	public TupleDesc getDesc() {
@@ -157,7 +170,7 @@ public class Relation {
 	
 	public ArrayList<Tuple> getTuples() {
 		//your code here
-		return tuples;
+		return tuples; 
 	}
 	
 	/**
