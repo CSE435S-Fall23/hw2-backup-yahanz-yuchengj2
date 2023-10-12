@@ -10,10 +10,21 @@ import java.util.Iterator;
  *
  */
 public class Aggregator {
+	private AggregateOperator o;
+	private boolean groupBy;
+	private TupleDesc td;
+	private ArrayList<Tuple> tuples;
+	int total = 0;
+	boolean IntField;
 
 	public Aggregator(AggregateOperator o, boolean groupBy, TupleDesc td) {
 		//your code here
-
+		this.o = o;
+		this.groupBy = groupBy;
+		this.td = td;
+		this.IntField = true;
+		this.tuples = new ArrayList<Tuple>();
+		
 	}
 
 	/**
@@ -22,6 +33,22 @@ public class Aggregator {
 	 */
 	public void merge(Tuple t) {
 		//your code here
+		if(this.groupBy) {
+			this.tuples.add(t);
+		}
+		else {
+			if(t.getDesc().getType(0) != Type.INT) {
+				this.IntField = false;
+			}
+			else {
+				this.IntField = true;
+			}
+			
+			if(this.o == AggregateOperator.AVG) {
+				this.total++;
+			}
+			this.tuples.add(t);
+		}
 	}
 	
 	/**
@@ -30,7 +57,8 @@ public class Aggregator {
 	 */
 	public ArrayList<Tuple> getResults() {
 		//your code here
-		return null;
+		return tuples;
+		
 	}
 
 }
