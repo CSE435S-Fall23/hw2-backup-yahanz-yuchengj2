@@ -199,6 +199,8 @@ public class Relation {
 	public String toString() {
 		// your code here
 		// print all tuples
-		return null;
+	String str = td.toString()+'\n';
+	for(Tuple tup : tuples)str +=tup.toString()+'\n';
+	return str;
 	}
 }
