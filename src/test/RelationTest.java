@@ -18,6 +18,7 @@ import hw1.HeapFile;
 import hw1.IntField;
 import hw1.Relation;
 import hw1.RelationalOperator;
+import hw1.Tuple;
 import hw1.TupleDesc;
 
 public class RelationTest {
@@ -100,16 +101,22 @@ public class RelationTest {
 		assertTrue(ar.getDesc().getFieldName(0).equals("b1"));
 		assertTrue(ar.getDesc().getFieldName(1).equals("a2"));
 		assertTrue(ar.getDesc().getSize() == 8);
-		
+		 
 	}
 	
 	@Test
 	public void testAggregate() {
 		Relation ar = new Relation(ahf.getAllTuples(), atd);
+		
+		
 		ArrayList<Integer> c = new ArrayList<Integer>();
 		c.add(1);
+		
 		ar = ar.project(c);
+		
+		
 		ar = ar.aggregate(AggregateOperator.SUM, false);
+		
 		
 		assertTrue(ar.getTuples().size() == 1);
 		IntField agg = (IntField)(ar.getTuples().get(0).getField(0));

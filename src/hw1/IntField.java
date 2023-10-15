@@ -8,8 +8,9 @@ import java.nio.ByteBuffer;
  */
 public class IntField implements Field {
     private int value;
-
+   
     public int getValue() {
+    	 //value = fields.get(0);
         return value;
     }
 
@@ -20,7 +21,7 @@ public class IntField implements Field {
      */
     public IntField(int i) {
         value = i;
-    }
+    } 
     
     public IntField(byte[] b) {
     	value = java.nio.ByteBuffer.wrap(b).getInt();

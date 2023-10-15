@@ -89,7 +89,7 @@ public class Relation {
 		Type[] type = new Type[fields.size()];
 		String[] fieldArr = new String[fields.size()];
 		int i = 0;
-		int j = 0;
+		int j = 0; 
 		for (Integer integer : fields) {
 			type[i] = this.td.getType(integer);
 			fieldArr[i] = this.td.getFieldName(integer);
@@ -99,6 +99,7 @@ public class Relation {
 		TupleDesc newTd = new TupleDesc(type, fieldArr);
 
 		for (Tuple tuple : this.getTuples()) {
+			j = 0;
 			Tuple tup = new Tuple(newTd);
 			for (Integer integer : fields) {
 
@@ -107,6 +108,10 @@ public class Relation {
 
 			}
 			tuples.add(tup);
+		}
+		
+		for(Tuple tp: tuples) {
+			System.out.println(tp);
 		}
 		return new Relation(tuples, newTd);
 

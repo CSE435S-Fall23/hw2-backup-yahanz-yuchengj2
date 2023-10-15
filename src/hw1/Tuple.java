@@ -19,12 +19,13 @@ public class Tuple {
 	private TupleDesc td;
 	private int pageId;
 	private int id;
-	private Map<Integer, Field> fields = new HashMap<Integer, Field>();
+	public Map<Integer, Field> fields = new HashMap<Integer, Field>();
+	
 	
 	public Tuple(TupleDesc t) {
 		//your code here
 		this.td = t;
-	}
+	} 
 	
 	public TupleDesc getDesc() {
 		//your code here
@@ -77,6 +78,7 @@ public class Tuple {
 	
 	public Field getField(int i) {
 		//your code here
+		
 		return fields.get(i);
 	}
 	

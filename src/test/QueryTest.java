@@ -82,7 +82,9 @@ public class QueryTest {
 		
 		assertTrue(r.getTuples().size() == 1);
 		IntField agg = (IntField) (r.getTuples().get(0).getField(0));
+		//System.out.println(agg.toString());
 		assertTrue(agg.getValue() == 36);
+		
 	}
 	
 	@Test

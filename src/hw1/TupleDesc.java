@@ -31,7 +31,7 @@ public class TupleDesc {
         //your code here
     	return types.length;
     }
-    
+     
     public void setFields(String[] fields) {
     	this.fields = fields;
     }
