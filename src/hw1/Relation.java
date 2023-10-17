@@ -59,7 +59,7 @@ public class Relation {
 	 */
 	public Relation rename(ArrayList<Integer> fields, ArrayList<String> names) {
 		// your code here
-		// return null;
+		
 
 		String[] newFields = new String[td.numFields()];
 		newFields = td.getFields();
@@ -70,7 +70,7 @@ public class Relation {
 		}
 
 		TupleDesc newTd = new TupleDesc(arr, newFields);
-		// td.setFields(newFields);
+		
 		return new Relation(tuples, newTd);
 	}
 
@@ -83,7 +83,7 @@ public class Relation {
 	 */
 	public Relation project(ArrayList<Integer> fields) {
 		// your code here
-//		return null;
+
 		ArrayList<Tuple> tuples = new ArrayList<>();
 
 		Type[] type = new Type[fields.size()];
@@ -174,10 +174,7 @@ public class Relation {
 	 * @return
 	 */
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
-		// ArrayList<Tuple> tuples = new ArrayList<>();
-		// TupleDesc newTd = new TupleDesc();
-
-		// use aggregator after it is finished
+		
 		Aggregator a = new Aggregator(op, groupBy, this.td);
 		for(Tuple t: tuples) {
 			a.merge(t);
@@ -203,7 +200,7 @@ public class Relation {
 	 */
 	public String toString() {
 		// your code here
-		// print all tuples
+		
 	String str = td.toString()+'\n';
 	for(Tuple tup : tuples)str +=tup.toString()+'\n';
 	return str;
