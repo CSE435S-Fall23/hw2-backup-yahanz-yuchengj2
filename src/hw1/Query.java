@@ -42,7 +42,7 @@ public class Query {
 		ColumnVisitor colVisitor = new ColumnVisitor();
 		TablesNamesFinder tNameFinder = new TablesNamesFinder();
 		List<String> tList = tNameFinder.getTableList(statement);
-
+		// from
 		int tbId = cata.getTableId(tList.get(0));
 		ArrayList<Tuple> tupleList = cata.getDbFile(tbId).getAllTuples();
 		TupleDesc initialTd = cata.getTupleDesc(tbId);
@@ -69,7 +69,7 @@ public class Query {
 				String tableName2 = splitField2[0];
 				String fieldName1 = splitField1[1];
 				String fieldName2 = splitField2[1];
-
+				// AS
 				if (!tableName.toLowerCase().equals(tableName2.toLowerCase())) {
 					String temp = fieldName1;
 					fieldName1 = fieldName2;
@@ -83,6 +83,8 @@ public class Query {
 			}
 		}
 
+	    // Extract the main table or from item from the FROM clause
+	
 		// where
 		Relation whereRelation = joinRelation;
 		WhereExpressionVisitor whereVisitor = new WhereExpressionVisitor();
