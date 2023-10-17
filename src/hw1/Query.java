@@ -83,7 +83,7 @@ public class Query {
 			}
 		}
 
-	    // Extract the main table or from item from the FROM clause
+	   
 	
 		// where
 		Relation whereRelation = joinRelation;
